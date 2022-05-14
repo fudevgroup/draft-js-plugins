@@ -2,8 +2,9 @@ import React, { ReactElement } from 'react';
 import PropTypes from 'prop-types';
 import { ContentBlock, ContentState, SelectionState } from 'draft-js';
 import { CSSProperties } from 'linaria';
-import { isYoutube, getYoutubeSrc, isVimeo, getVimeoSrc } from '../utils';
+import { isYoutube, getYoutubeSrc, isVimeo, getVimeoSrc, isAparat } from '../utils';
 import { VideoPluginTheme } from '../../theme';
+import AparatVideoComponent from './AparatVideoComponent';
 
 const YOUTUBE_PREFIX = 'https://www.youtube.com/embed/';
 const VIMEO_PREFIX = 'https://player.vimeo.com/video/';
@@ -16,6 +17,10 @@ const getSrc = ({ src }: { src: string }): string | undefined => {
   if (isVimeo(src)) {
     const { srcID } = getVimeoSrc(src);
     return `${VIMEO_PREFIX}${srcID}`;
+  }
+  if (isAparat(src)) {
+    const { srcID } = getVimeoSrc(src);
+    return `https://www.aparat.com/video/video/embed/videohash/${srcID}/vt/frame`;
   }
   return undefined;
 };
@@ -48,6 +53,9 @@ const DefaultVideoComponent = ({
 }: DefaultVideoComponentProps): ReactElement => {
   const src = getSrc(blockProps);
   if (src) {
+    if (isAparat(blockProps.src)) {
+      return <AparatVideoComponent src={src} />
+    }
     return (
       <div style={style}>
         <div className={`${theme.iframeContainer} ${className}`}>
